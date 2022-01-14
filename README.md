@@ -10,7 +10,7 @@ user@root:~/src$ python3 -m venv env
 user@root:~/src$ source env/bin/activate
 (env) user@root:~/src$ pip install <packages listed below>
 (env) user@root:~/src$ deactivate && cd ..
-(env) user@root:~/weather$ bash woo.sh
+user@root:~/weather$ bash woo.sh
 ```
 
 Manually installing `pillow`,`pandas`,`matplotlib` and `requests` should install all sub-dependencies.
