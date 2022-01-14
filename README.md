@@ -4,6 +4,8 @@ Written on and for Ubuntu using bash.
 
 ## Quick start
 ```console
+user@root:~/ git clone https://github.com/worldchampio/weather.git
+user@root:~/ cd src
 user@root:~/src$ python3 -m venv env
 user@root:~/src$ source env/bin/activate
 (env) user@root:~/src$ pip install <packages listed below>
