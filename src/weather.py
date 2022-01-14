@@ -20,10 +20,15 @@ def getdata(endpoint, parameters,_client_id):
         print('Error! Returned status code %s' % r.status_code)
         print('Message: %s' % json['error']['message'])
         print('Reason: %s' % json['error']['reason'])
+        
+        new_src = input("Not found, try another name: ")
+        new_param = {'name':new_src}
+        return np.asarray(getdata(endpoint,new_param,client_id))
+        
     
     
 def main():
-    client_id = '<client id here>'
+    client_id = '<CLIENT ID HERE>'
 
     # Make query date
     today = date.today()
