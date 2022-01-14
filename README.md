@@ -3,13 +3,13 @@
 Written on and for Ubuntu using bash.
 
 ## Quick start
-´´´console
+```bash
 user@root:~/src$ python3 -m venv env
 user@root:~/src$ source env/bin/activate
 (env) user@root:~/src$ pip install <packages listed below>
 (env) user@root:~/src$ deactivate && cd ..
 (env) user@root:~/$ bash woo.sh
-´´´
+```
 
 ## Dependencies
 Package            Version  
