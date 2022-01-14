@@ -11,6 +11,8 @@ user@root:~/src$ source env/bin/activate
 (env) user@root:~/$ bash woo.sh
 ```
 
+Manually installing `PIL`,`pandas`,`matplotlib` and `requests` should install all sub-dependencies.
+
 ## Dependencies
 |Package           |Version    |
 |------------------|-----------|
