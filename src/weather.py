@@ -51,6 +51,7 @@ def main():
         'name': name_src
     }
     
+    # TEST
     
     # Source response 
     source_body = getdata(end_src,param_src,client_id)
