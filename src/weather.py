@@ -31,6 +31,9 @@ def getdata(endpoint, parameters,_client_id):
 def main():
     client_id = '<CLIENT ID HERE>'
 
+    #lol
+    pd.set_option('mode.chained_assignment',None)
+    
     # Make query date
     today = date.today()
     now = today.strftime("%Y-%m-%d")
@@ -81,7 +84,7 @@ def main():
     df2['referenceTime'] = pd.to_datetime(df2['referenceTime'],)
     
     # uncomment to show data in terminal
-    print(df2)
+    # print(df2)
     
 
     unit_label = df2['unit'][1]
@@ -98,7 +101,7 @@ def main():
     fig, ax = plt.subplots()
     ax.plot(x, y)
     ax.set(xlabel='time [hh:mm]', ylabel=unit_label,
-            title='MET data from '+source_id+' at '+stationholder+': '+mag_label )
+            title='Data for '+ now +' from '+source_id+'\n Displaying '+mag_label+ ' at '+stationholder+': ' )
     ax.grid()
     plt.setp(ax.get_xticklabels(), rotation=60, ha='right')
     plt.setp(ax.get_xticklabels()[::2], visible=False)
