@@ -13,21 +13,22 @@ def getdata(endpoint, parameters,_client_id):
 
     # Check if the request worked, print out any errors
     if r.status_code == 200:
-        print('Data retrieved from ' + endpoint)
+        #print('Data retrieved from ' + endpoint)
         data = json['data']
         return np.asarray(data)
     else:
         print('Error! Returned status code %s' % r.status_code)
         print('Message: %s' % json['error']['message'])
         print('Reason: %s' % json['error']['reason'])
+
+        # Handle source with no available data
         if 'name' in parameters:
             new_src = input("Not found, try another name: ")
             new_param = {'name':new_src}
             return np.asarray(getdata(endpoint,new_param,client_id))
         elif 'sources' in parameters:
             main()
-    
-    
+        
 def main():
     client_id = '<CLIENT ID HERE>'
 
@@ -39,7 +40,7 @@ def main():
     now = today.strftime("%Y-%m-%d")
     day = int(today.strftime("%d"))+1
     tomorrow = today.strftime("%Y-%m-")+str(day)
-    querydate = now+'/'+tomorrow
+    querydate = str(now+'/'+tomorrow)
 
     # Get desired location: 
     name_src = str(input("Skriv navn på ønsket målested: [yme, statfjord a/b/c, troll a/b/c, .. etc] \n"))
@@ -55,20 +56,18 @@ def main():
     source_body = getdata(end_src,param_src,client_id)
     source_id = source_body[0]['id']
     stationholder = source_body[0]['name']
-    stationholder = stationholder[0]+stationholder[1:100].lower()
-
+    stationholder = stationholder[0]+stationholder[1:len(stationholder)].lower()
 
     # Data choice list
     elem = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
-    i = int(input('Current[1], Wave Hs[2], Wind[3], Temp[4]: '))
+    i = int(input('Plot options:\nCurrent[1], Wave Hs[2], Wind[3], Temp[4]: '))
     
     elem_type = str(elem[i-1])
-
     end_elem = 'https://frost.met.no/observations/v0.jsonld'
     param_elem = {
         'sources': source_id,
         'elements': elem_type,
-        'referencetime': str(querydate),
+        'referencetime': querydate,
     }
 
     data = getdata(end_elem,param_elem,client_id)
@@ -85,10 +84,11 @@ def main():
     columns = ['sourceId','referenceTime','elementId','value','unit']
     df2 = df[columns].copy()
     df2['referenceTime'] = pd.to_datetime(df2['referenceTime'],)
-    
-    # uncomment to show data in terminal
-    # print(df2)
-    
+
+    # Calculate min/max
+    mag_max = str(max(df2['value']))
+    mag_min = str(min(df2['value']))
+     
     unit_label = df2['unit'][1]
     mag_label = df2['elementId'][1]
     mag_label = mag_label.replace('_',' ')
@@ -104,7 +104,7 @@ def main():
     fig, ax = plt.subplots()
     ax.plot(x, y)
     ax.set(xlabel='time [hh:mm]', ylabel=unit_label,
-            title='Data for '+ now +' from '+source_id+'\n Displaying '+mag_label+ ' at '+stationholder+': ' )
+            title= 'Displaying '+mag_label+ ' at '+stationholder+'.\n Data for '+ now +' from '+source_id+'. Max: '+mag_max+', Min: '+mag_min )
     ax.grid()
     plt.setp(ax.get_xticklabels(), rotation=60, ha='right')
     plt.setp(ax.get_xticklabels()[::2], visible=False)
