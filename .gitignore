@@ -4,6 +4,7 @@
 *.out
 *.exe
 
+secret.txt
 __pycache__
 src/env/*
 ./src/env/*
