@@ -47,7 +47,7 @@ def main():
     querydate = str(now+'/'+tomorrow)
 
     # Get desired location: 
-    name_src = str(input("Skriv navn på ønsket målested: [yme, statfjord a/b/c, troll a/b/c, .. etc] \n"))
+    name_src = str(input("Type location: [yme, statfjord a/b/c, troll a/b/c, .. etc] \n"))
 
     # Source request
     end_src = 'https://frost.met.no/sources/v0.jsonld?'
