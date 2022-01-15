@@ -32,7 +32,9 @@ def getdata(endpoint, parameters,_client_id):
             main()
         
 def main():
-    client_id = str(input("Paste your client id: \n"))
+    f = open("secret.txt","r")
+    client_id = str(f.read(36))
+    f.close()
 
     #lol
     pd.set_option('mode.chained_assignment',None)
