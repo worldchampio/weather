@@ -20,11 +20,12 @@ def getdata(endpoint, parameters,_client_id):
         print('Error! Returned status code %s' % r.status_code)
         print('Message: %s' % json['error']['message'])
         print('Reason: %s' % json['error']['reason'])
-        
-        new_src = input("Not found, try another name: ")
-        new_param = {'name':new_src}
-        return np.asarray(getdata(endpoint,new_param,client_id))
-        
+        if 'name' in parameters:
+            new_src = input("Not found, try another name: ")
+            new_param = {'name':new_src}
+            return np.asarray(getdata(endpoint,new_param,client_id))
+        elif 'sources' in parameters:
+            main()
     
     
 def main():
@@ -53,7 +54,7 @@ def main():
 
     # Data choice list
     elem = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
-    i = int(input('Current[1], Wave[2], Wind[3], Temp[4]: '))
+    i = int(input('Current[1], Wave Hs[2], Wind[3], Temp[4]: '))
     
     elem_type = str(elem[i-1])
 
@@ -80,21 +81,27 @@ def main():
     df2['referenceTime'] = pd.to_datetime(df2['referenceTime'],)
     
     # uncomment to show data in terminal
-    #print(df2)
+    print(df2)
+    
 
     unit_label = df2['unit'][1]
     mag_label = df2['elementId'][1]
 
-    x = df['referenceTime']
+    x = df.loc[:,'referenceTime']
+    
+    for entry in range(0, len(x)):
+        x[entry] = x.loc[entry][:-8]
+        x[entry] = x.loc[entry][11:]
+    
     y = df['value']
 
     fig, ax = plt.subplots()
     ax.plot(x, y)
-
-    ax.set(xlabel='timestamp', ylabel=unit_label,
-            title='MET data from '+source_id+' at '+stationholder+', '+mag_label )
+    ax.set(xlabel='time [hh:mm]', ylabel=unit_label,
+            title='MET data from '+source_id+' at '+stationholder+': '+mag_label )
     ax.grid()
-
+    plt.setp(ax.get_xticklabels(), rotation=60, ha='right')
+    plt.setp(ax.get_xticklabels()[::2], visible=False)
     fig.savefig("Plot.png")
 
 if __name__ == "__main__":
