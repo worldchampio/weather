@@ -1,0 +1,8 @@
+*.png
+*.png
+*.jpeg
+*.out
+*.exe
+
+__pycache__
+/env/*
