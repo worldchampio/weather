@@ -1,8 +1,9 @@
 *.png
-*.png
+*.PNG
 *.jpeg
 *.out
 *.exe
 
 __pycache__
-/env/*
+src/env/*
+./src/env/*
