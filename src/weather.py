@@ -85,15 +85,20 @@ def main():
 
     df = df.reset_index()
     columns = ['sourceId','referenceTime','elementId','value','unit']
-    df2 = df[columns].copy()
-    df2['referenceTime'] = pd.to_datetime(df2['referenceTime'],)
 
-    # Calculate min/max
-    mag_max = str(max(df2['value']))
-    mag_min = str(min(df2['value']))
-     
-    unit_label = '['+df2['unit'][1]+']'
-    mag_label = df2['elementId'][1]
+    # Calculate plot limits
+    mag_max = str(max(df['value']))
+    mag_min = str(min(df['value']))
+    # Scale limits
+    ylim_param = (float(mag_min)-0.8*float(mag_min),float(mag_max)+0.1*float(mag_max))
+    
+    # Handle exception if min==max
+    if ylim_param == (0,0):
+        ylim_param = None
+    
+    # Make labels pretty
+    unit_label = '['+df['unit'][1]+']'
+    mag_label = df['elementId'][1]
     mag_label = mag_label.replace('_',' ')
 
     x = df.loc[:,'referenceTime']
@@ -109,11 +114,11 @@ def main():
 
     ax.set(xlabel='time [hh:mm]', 
             ylabel=unit_label, 
-            ylim=(float(mag_min)-0.8*float(mag_min),float(mag_max)+0.1*float(mag_max)),
+            ylim=ylim_param,
             title= 'Displaying '+mag_label+ ' at '+stationholder+'.\n Data for '+ now +' from '+source_id+'. Max: '+mag_max+', Min: '+mag_min )
     ax.grid()
     plt.setp(ax.get_xticklabels(), rotation=60, ha='right')
-    plt.setp(ax.get_xticklabels()[::2], visible=False)
+    plt.setp(ax.get_xticklabels()[::2], visible=False,fontsize=2)
     
     fig.savefig("Plot.png")
 
