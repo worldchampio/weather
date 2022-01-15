@@ -106,11 +106,15 @@ def main():
 
     fig, ax = plt.subplots()
     ax.plot(x, y)
-    ax.set(xlabel='time [hh:mm]', ylabel=unit_label,
+
+    ax.set(xlabel='time [hh:mm]', 
+            ylabel=unit_label, 
+            ylim=(float(mag_min)-0.8*float(mag_min),float(mag_max)+0.1*float(mag_max)),
             title= 'Displaying '+mag_label+ ' at '+stationholder+'.\n Data for '+ now +' from '+source_id+'. Max: '+mag_max+', Min: '+mag_min )
     ax.grid()
     plt.setp(ax.get_xticklabels(), rotation=60, ha='right')
     plt.setp(ax.get_xticklabels()[::2], visible=False)
+    
     fig.savefig("Plot.png")
 
 if __name__ == "__main__":
