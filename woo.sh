@@ -4,7 +4,7 @@ rm Plot.png
 
 source env/bin/activate
 
-pip list > dependencies.txt
+#pip list > dependencies.txt
 
 python3 weather.py
 
