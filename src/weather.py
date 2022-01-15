@@ -32,7 +32,7 @@ def getdata(endpoint, parameters,_client_id):
             main()
         
 def main():
-    client_id = '<CLIENT ID HERE>'
+    client_id = str(input("Paste your client id: \n"))
 
     #lol
     pd.set_option('mode.chained_assignment',None)
