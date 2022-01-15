@@ -10,7 +10,7 @@ The client id can then assigned in `src/weather.py` to `client_id`. (Don't uploa
 ```console
 user@root:~$ git clone https://github.com/worldchampio/weather.git
 user@root:~$ cd weather/src
-user@root:~$ touch secret.txt #insert your client id in this file
+user@root:~/src$ touch secret.txt #insert your client id in this file
 user@root:~/src$ python3 -m venv env
 user@root:~/src$ source env/bin/activate
 (env) user@root:~/src$ pip install <packages listed below>
