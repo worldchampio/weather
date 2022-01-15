@@ -16,6 +16,8 @@ def getdata(endpoint, parameters,_client_id):
         #print('Data retrieved from ' + endpoint)
         data = json['data']
         return np.asarray(data)
+    elif r.status_code == 401:
+        print('Invalid client id.')
     else:
         print('Error! Returned status code %s' % r.status_code)
         print('Message: %s' % json['error']['message'])
@@ -50,9 +52,7 @@ def main():
     param_src = {
         'name': name_src
     }
-    
-    # TEST
-    
+
     # Source response 
     source_body = getdata(end_src,param_src,client_id)
     source_id = source_body[0]['id']
