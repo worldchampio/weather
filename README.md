@@ -4,7 +4,7 @@ Written on and for Ubuntu using bash. To authenticate your requests to the Frost
 
 https://frost.met.no/auth/requestCredentials.html
 
-The client id is then assigned in `src/weather.py` to `client_id`. (Don't upload it anywhere, store it locally)
+The client id can then assigned in `src/weather.py` to `client_id`. (Don't upload it anywhere, store it locally). Currently the client prompted for, to be pasted in.
 
 ## Quick start
 ```console
