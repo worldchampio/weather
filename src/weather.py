@@ -49,11 +49,14 @@ def main():
     param_src = {
         'name': name_src
     }
-
+    
+    
     # Source response 
     source_body = getdata(end_src,param_src,client_id)
     source_id = source_body[0]['id']
     stationholder = source_body[0]['name']
+    stationholder = stationholder[0]+stationholder[1:100].lower()
+
 
     # Data choice list
     elem = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
@@ -86,9 +89,9 @@ def main():
     # uncomment to show data in terminal
     # print(df2)
     
-
     unit_label = df2['unit'][1]
     mag_label = df2['elementId'][1]
+    mag_label = mag_label.replace('_',' ')
 
     x = df.loc[:,'referenceTime']
     
