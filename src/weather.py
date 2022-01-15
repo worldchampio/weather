@@ -92,7 +92,7 @@ def main():
     mag_max = str(max(df2['value']))
     mag_min = str(min(df2['value']))
      
-    unit_label = df2['unit'][1]
+    unit_label = '['+df2['unit'][1]+']'
     mag_label = df2['elementId'][1]
     mag_label = mag_label.replace('_',' ')
 
