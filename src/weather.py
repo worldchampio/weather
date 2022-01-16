@@ -2,7 +2,17 @@ import requests
 import numpy as np
 import pandas as pd
 from datetime import date
-import matplotlib.pyplot as plt 
+import matplotlib.pyplot as plt
+
+"""
+Two https GET requests are chained together, so that
+a source id for a manually inputted location is
+requested and used to request data using the source id
+attached to the desired location. Four observation types
+can then be selected.
+
+Data is currently requested for the current day.
+"""
 
 def getdata(endpoint, parameters,_client_id):
     client_id = _client_id
