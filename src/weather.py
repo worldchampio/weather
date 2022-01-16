@@ -100,7 +100,7 @@ def main():
     mag_max = str(round(max(df['value']),1))
     mag_min = str(round(min(df['value']),1))
     # Scale limits
-    ylim_param = (float(mag_min)-0.8*float(mag_min),float(mag_max)+0.1*float(mag_max))
+    ylim_param = (float(mag_min)-0.4*float(mag_min),float(mag_max)+0.1*float(mag_max))
     
     # Handle exception if min==max
     if ylim_param == (0,0):
