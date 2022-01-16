@@ -102,8 +102,8 @@ def main():
     
     # TEST COMMENT
     
-    # Convert m/s to kts
-    if df['elementId'][1]=='wind_speed':
+    # Convert m/s to kts (Is only done for wind and current)
+    if df['unit'][1]=='m/s':
         unit_label = '[kts]'
         for j in range(len(df['value'])):
             df['value'][j]=df['value'][j]*1.94384449 #to kts
