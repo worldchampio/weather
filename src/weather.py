@@ -106,18 +106,19 @@ def main():
     if ylim_param == (0,0):
         ylim_param = None
     
-    # Make labels pretty
-    mag_label = df['elementId'][1]
-    mag_label = mag_label.replace('_',' ')
+    # Make element name prettier
+    mag_label = df['elementId'][1].replace('_',' ')
 
+    # Data for x-axis
     x = df.loc[:,'referenceTime']
-    # remove unecessary digits from timestamp
+    y = df['value']
+
+    # remove unecessary digits from timestamp to get format -> [hh:mm]
     for entry in range(0, len(x)):
         x[entry] = x.loc[entry][:-8]
         x[entry] = x.loc[entry][11:]
     
-    y = df['value']
-
+    # Plot the data
     fig, ax = plt.subplots()
     ax.plot(x, y)
 
