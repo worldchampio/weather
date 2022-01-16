@@ -57,15 +57,11 @@ def main():
     now = today.strftime("%Y-%m-%d")
     day = int(today.strftime("%d"))+1
     tomorrow = today.strftime("%Y-%m-")+str(day)
-    querydate = str(now+'/'+tomorrow)
-
-    # Get desired location: 
-    name_src = str(input("Type location: [yme, statfjord a/b/c, troll a/b/c, .. etc] \n"))
-
+    
     # Source request
     end_src = 'https://frost.met.no/sources/v0.jsonld?'
     param_src = {
-        'name': name_src
+        'name': str(input("Type location: [yme, statfjord a/b/c, troll a/b/c, .. etc] \n"))
     }
 
     # Source response 
@@ -76,17 +72,15 @@ def main():
     stationholder = stationholder[0]+stationholder[1:len(stationholder)].lower()
 
     # Data choice list
-    #   More options could be added to elem
     elem = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
     i = int(input('Plot options:\nCurrent[1], Wave Hs[2], Wind[3], Temp[4]: '))
     
     # Observation request
-    elem_type = str(elem[i-1])
     end_elem = 'https://frost.met.no/observations/v0.jsonld'
     param_elem = {
         'sources': source_id,
-        'elements': elem_type,
-        'referencetime': querydate,
+        'elements': str(elem[i-1]),
+        'referencetime': str(now+'/'+tomorrow),
     }
 
     # Observation response
