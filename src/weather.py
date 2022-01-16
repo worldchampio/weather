@@ -42,11 +42,14 @@ def getdata(endpoint, parameters,_client_id):
             main()
         
 def main():
+    # Client id is stored in secret.txt,
+    # and should start on the first character
+    # on the first line
     f = open("secret.txt","r")
     client_id = str(f.read(36))
     f.close()
 
-    #lol
+    # Supress pd error messages (hey if it works)
     pd.set_option('mode.chained_assignment',None)
     
     # Make query date
@@ -69,9 +72,11 @@ def main():
     source_body = getdata(end_src,param_src,client_id)
     source_id = source_body[0]['id']
     stationholder = source_body[0]['name']
+    # The name is returned in all caps, and formatted properly below:
     stationholder = stationholder[0]+stationholder[1:len(stationholder)].lower()
 
     # Data choice list
+    #   More options could be added to elem
     elem = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
     i = int(input('Plot options:\nCurrent[1], Wave Hs[2], Wind[3], Temp[4]: '))
     
@@ -99,9 +104,7 @@ def main():
     columns = ['sourceId','referenceTime','elementId','value','unit']
 
     unit_label = '['+df['unit'][1]+']'
-    
-    # TEST COMMENT
-    
+        
     # Convert m/s to kts (Is only done for wind and current)
     if df['unit'][1]=='m/s':
         unit_label = '[kts]'
@@ -109,23 +112,33 @@ def main():
             df['value'][j]=df['value'][j]*1.94384449 #to kts
 
     # Calculate plot limits
+    #   Find the max value of the row, round
+    #   to 1 decimal point, convert to string
     mag_max = str(round(max(df['value']),1))
     mag_min = str(round(min(df['value']),1))
+    
     # Scale limits
+    #   Maybe the scaling methods of matplotlib
+    #   are better but these look nicer 
     ylim_param = (float(mag_min)-0.4*float(mag_min),float(mag_max)+0.1*float(mag_max))
     
     # Handle exception if min==max
+    #   If data is supposed to be available,
+    #   but for some reason isnt, df['value']
+    #   will be all zeros, in which case the
+    #   scaling method is set to None to make
+    #   matplotlib handle it
     if ylim_param == (0,0):
         ylim_param = None
     
-    # Make element name prettier
+    # Observation name formatting
     mag_label = df['elementId'][1].replace('_',' ')
 
-    # Data for x-axis
+    # Data for plot 
     x = df.loc[:,'referenceTime']
     y = df['value']
 
-    # remove unecessary digits from timestamp to get format -> [hh:mm]
+    # Remove unecessary digits from timestamp to get format -> [hh:mm]
     for entry in range(0, len(x)):
         x[entry] = x.loc[entry][:-8]
         x[entry] = x.loc[entry][11:]
@@ -142,6 +155,8 @@ def main():
     plt.setp(ax.get_xticklabels(), rotation=60, ha='right')
     plt.setp(ax.get_xticklabels()[::2], visible=False,fontsize=2)
     
+    # This file will be deleted next time the 
+    # bash script is executed
     fig.savefig("Plot.png")
 
 if __name__ == "__main__":
