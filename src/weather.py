@@ -65,6 +65,7 @@ def main():
     elem = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
     i = int(input('Plot options:\nCurrent[1], Wave Hs[2], Wind[3], Temp[4]: '))
     
+    # Observation request
     elem_type = str(elem[i-1])
     end_elem = 'https://frost.met.no/observations/v0.jsonld'
     param_elem = {
@@ -73,10 +74,11 @@ def main():
         'referencetime': querydate,
     }
 
+    # Observation response
     data = getdata(end_elem,param_elem,client_id)
-    # This will return a Dataframe with all of the observations in a table format
     df = pd.DataFrame()
 
+    # Handle returned array
     for i in range(len(data)):
         row = pd.DataFrame(data[i]['observations'])
         row['referenceTime'] = data[i]['referenceTime']
@@ -109,7 +111,7 @@ def main():
     mag_label = mag_label.replace('_',' ')
 
     x = df.loc[:,'referenceTime']
-    
+    # remove unecessary digits from timestamp
     for entry in range(0, len(x)):
         x[entry] = x.loc[entry][:-8]
         x[entry] = x.loc[entry][11:]
