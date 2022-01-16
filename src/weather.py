@@ -86,9 +86,17 @@ def main():
     df = df.reset_index()
     columns = ['sourceId','referenceTime','elementId','value','unit']
 
+    unit_label = '['+df['unit'][1]+']'
+    
+    # Convert m/s to kts
+    if df['elementId'][1]=='wind_speed':
+        unit_label = '[kts]'
+        for j in range(len(df['value'])):
+            df['value'][j]=df['value'][j]*1.94384449 #to kts
+
     # Calculate plot limits
-    mag_max = str(max(df['value']))
-    mag_min = str(min(df['value']))
+    mag_max = str(round(max(df['value']),1))
+    mag_min = str(round(min(df['value']),1))
     # Scale limits
     ylim_param = (float(mag_min)-0.8*float(mag_min),float(mag_max)+0.1*float(mag_max))
     
@@ -97,7 +105,6 @@ def main():
         ylim_param = None
     
     # Make labels pretty
-    unit_label = '['+df['unit'][1]+']'
     mag_label = df['elementId'][1]
     mag_label = mag_label.replace('_',' ')
 
