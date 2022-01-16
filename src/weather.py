@@ -127,7 +127,7 @@ def main():
     #   but for some reason isnt, df['value']
     #   will be all zeros, in which case the
     #   scaling method is set to None to make
-    #   matplotlib handle it
+    #   matplotlib handle it (ie eliminate error messages)
     if ylim_param == (0,0):
         ylim_param = None
     
@@ -153,7 +153,7 @@ def main():
             title= 'Displaying '+mag_label+ ' at '+stationholder+'.\n Data for '+ now +' from '+source_id+'. Max: '+mag_max+', Min: '+mag_min )
     ax.grid()
     plt.setp(ax.get_xticklabels(), rotation=60, ha='right')
-    plt.setp(ax.get_xticklabels()[::2], visible=False,fontsize=2)
+    plt.setp(ax.get_xticklabels()[::2], visible=False)
     
     # This file will be deleted next time the 
     # bash script is executed
