@@ -167,6 +167,7 @@ class Weather:
                 title= 'Displaying '+mag_label+ ' at '+stationholder+'.\n Data for '+ t_now +' from '+source_id+'. Max: '+mag_max+', Min: '+mag_min )
         ax.grid()
         plt.setp(ax.get_xticklabels(), rotation=60, ha='right')
+        #This line sets label spacing, FIX ITTTTTT #TODO TODO
         plt.setp(ax.get_xticklabels()[::2], visible=False)
         
         # This file will be deleted next time the 
