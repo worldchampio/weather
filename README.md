@@ -8,6 +8,9 @@ The client id can then be assigned in `src/weather.py` to `client_id`. (Don't up
 
 
 Why run from a bash script? To automate venv activation/deactivation of course
+## TODO
+- See if error handling needs improvement in class constructor
+- Add better spacing for timestamp
 
 ## Quick start
 ```console
