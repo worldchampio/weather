@@ -92,7 +92,7 @@ class Weather:
             row = pd.DataFrame(data[i]['observations'])
             row['referenceTime'] = data[i]['referenceTime']
             row['sourceId'] = data[i]['sourceId']
-            df = df.append(row)
+            df = pd.concat([df,row])
 
         df = df.reset_index()
         columns = ['sourceId','referenceTime','elementId','value','unit']
