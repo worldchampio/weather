@@ -57,12 +57,13 @@ class Weather:
             observations = self.getdata(end_observ, param_observ, client_id)
         
             self.plotdata(observations, stationholder, source_id, now)
-        except ValueError:
-            print("Valueerror raised")
-            main()
-        except TypeError:
-            print("Typeerror raised")
-            main()
+        except Exception as e:
+            if observations is None:
+                print("No data for this location.")
+                main()
+            else:
+                print("%s raised" %e)
+                main()
 
     def get_src(self):
         return {
@@ -76,12 +77,13 @@ class Weather:
         # Extract JSON data
         json = r.json()
         # Check if the request worked, print out any errors
-        if r.status_code == 200:
-            data = json['data']
-            return np.asarray(data)
+        try:
+            if r.status_code == 200:
+                data = json['data']
+                return np.asarray(data)
         # Handle source with no available data
-        else:
-            print("No data found. ("+r.status_code+")")
+        except Exception as e:
+            print("Exception %s code %i " %(e,r.status_code))
             main()
 
     def plotdata(self, data, stationholder, source_id, t_now): #Done
