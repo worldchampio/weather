@@ -156,8 +156,7 @@ class Weather:
         plt.xlabel('Time [s]')
         plt.ylabel(unit_label)
         plt.grid()
-        fig.savefig("Plot.png")
-        
+        plt.show()        
 def main():    
     obj = Weather('https://frost.met.no/sources/v0.jsonld?','https://frost.met.no/observations/v0.jsonld')
 
