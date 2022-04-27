@@ -61,10 +61,9 @@ class Weather:
         except Exception as e:
             if observations is None:
                 print("No data for this location.")
-                main()
             else:
                 print("%s raised" %e)
-                main()
+            main()
 
     def get_src(self):
         return {
