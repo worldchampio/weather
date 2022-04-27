@@ -21,8 +21,9 @@ class Weather:
 
             # Make query date
             today = date.today()
-            now = today.strftime("%Y-%m-%d")
-            day = int(today.strftime("%d"))+1
+            
+            now   = today.strftime("%Y-%m-%d")
+            day   = int(today.strftime("%d"))+1
             tomorrow = today.strftime("%Y-%m-")+str(day)
 
             # Supress pd error messages (hey if it works)
@@ -40,7 +41,7 @@ class Weather:
             sensorsystem = self.getdata(end_src, param_src, client_id)
             
             # Extract id and name
-            source_id = sensorsystem[0]['id']
+            source_id     = sensorsystem[0]['id']
             stationholder = sensorsystem[0]['name']
             # The name is returned in all caps, and formatted properly below:
             stationholder = stationholder[0]+stationholder[1:len(stationholder)].lower()
@@ -49,8 +50,8 @@ class Weather:
             i = int(input('Plot options:\nCurrent[1], Wave Hs[2], Wind[3], Temp[4]: '))
 
             param_observ = {
-                'sources': source_id,
-                'elements': str(elem[i-1]),
+                'sources'      : source_id,
+                'elements'     : str(elem[i-1]),
                 'referencetime': str(now+'/'+tomorrow)
             }
 
@@ -76,11 +77,13 @@ class Weather:
         r = requests.get(endpoint, parameters, auth=(client_id,''))
         # Extract JSON data
         json = r.json()
+        
         # Check if the request worked, print out any errors
         try:
             if r.status_code == 200:
                 data = json['data']
                 return np.asarray(data)
+        
         # Handle source with no available data
         except Exception as e:
             print("Exception %s code %i " %(e,r.status_code))
@@ -92,12 +95,20 @@ class Weather:
         # Handle returned array
         for i in range(len(data)):
             row = pd.DataFrame(data[i]['observations'])
+            
             row['referenceTime'] = data[i]['referenceTime']
-            row['sourceId'] = data[i]['sourceId']
+            row['sourceId']      = data[i]['sourceId']
+            
             df = pd.concat([df,row])
 
         df = df.reset_index()
-        columns = ['sourceId','referenceTime','elementId','value','unit']
+        columns = [
+            'sourceId',
+            'referenceTime',
+            'elementId',
+            'value',
+            'unit'
+        ]
 
         unit_label = '['+df['unit'][1]+']'
             
