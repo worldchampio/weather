@@ -15,31 +15,27 @@ Data is currently requested for the current day.
 """
 
 class Weather:
+    today = date.today()
+    now   = today.strftime("%Y-%m-%d")
+    day   = int(today.strftime("%d"))+1
+    tomorrow = today.strftime("%Y-%m-")+str(day)
+
     def __init__(self, end_src, end_observ) -> None:
         try:
             elem = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
 
-            # Make query date
-            today = date.today()
-            
-            now   = today.strftime("%Y-%m-%d")
-            day   = int(today.strftime("%d"))+1
-            tomorrow = today.strftime("%Y-%m-")+str(day)
-
             # Supress pd error messages (hey if it works)
             pd.set_option('mode.chained_assignment',None)
 
-            # Load client id
-            f = open("secret.txt","r")
-            client_id = str(f.read(36))
-            f.close()
+            secret = 'acd22841-846a-4dc3-a82d-d3b499bf18cc' #unused
+            client_id = 'e357e001-b780-4a47-be88-9f0f84a3060b'
             
             # Format source parameters with user input
             param_src = self.get_src()
 
             # Response is bundled in 'sensorsystem'
-            sensorsystem = self.getdata(end_src, param_src, client_id)
-            
+            sensorsystem = self.get_data(end_src, param_src, client_id)
+
             # Extract id and name
             source_id     = sensorsystem[0]['id']
             stationholder = sensorsystem[0]['name']
@@ -47,22 +43,20 @@ class Weather:
             stationholder = stationholder[0]+stationholder[1:len(stationholder)].lower()
 
             # Observation selection
+            print("Found source %s (%s)" % (source_id,stationholder))
             i = int(input('Plot options:\nCurrent[1], Wave Hs[2], Wind[3], Temp[4]: '))
 
             param_observ = {
                 'sources'      : source_id,
                 'elements'     : str(elem[i-1]),
-                'referencetime': str(now+'/'+tomorrow)
+                'referencetime': str(self.now+'/'+self.tomorrow)
             }
 
-            observations = self.getdata(end_observ, param_observ, client_id)
-        
-            self.plotdata(observations, stationholder, source_id, now)
+            observations = self.get_data(end_observ, param_observ, client_id)
+            self.plot_data(observations, stationholder, source_id)
+
         except Exception as e:
-            if observations is None:
-                print("No data for this location.")
-            else:
-                print("%s raised" %e)
+            print("Error: %s" %e)
             main()
 
     def get_src(self):
@@ -70,7 +64,7 @@ class Weather:
             'name': str(input("Type location: [yme, statfjord a/b/c, troll a/b/c, .. etc] \n"))
         }
         
-    def getdata(self, endpoint, parameters,_client_id): # Done
+    def get_data(self, endpoint, parameters,_client_id): # Done
         client_id = _client_id
 
         r = requests.get(endpoint, parameters, auth=(client_id,''))
@@ -78,17 +72,13 @@ class Weather:
         json = r.json()
         
         # Check if the request worked, print out any errors
-        try:
-            if r.status_code == 200:
-                data = json['data']
-                return np.asarray(data)
+        if r.status_code == 200:
+            data = json['data']
+            return np.asarray(data)
+        else:
+            print("Error %i, %s" %(r.status_code,r.reason))
         
-        # Handle source with no available data
-        except Exception as e:
-            print("Exception %s code %i " %(e,r.status_code))
-            main()
-
-    def plotdata(self, data, stationholder, source_id, t_now): #Done
+    def plot_data(self, data, stationholder, source_id): #Done
         df = pd.DataFrame()
 
         # Handle returned array
@@ -101,14 +91,6 @@ class Weather:
             df = pd.concat([df,row])
 
         df = df.reset_index()
-        columns = [
-            'sourceId',
-            'referenceTime',
-            'elementId',
-            'value',
-            'unit'
-        ]
-
         unit_label = '['+df['unit'][1]+']'
             
         # Convert m/s to kts (Is only done for wind and current)
@@ -118,8 +100,6 @@ class Weather:
                 df['value'][j]=df['value'][j]*1.94384449
 
         # Calculate plot limits
-        #   Find the max value of the row, round
-        #   to 1 decimal point, convert to string
         mag_max = str(round(max(df['value']),1))
         mag_min = str(round(min(df['value']),1))
         
@@ -141,6 +121,8 @@ class Weather:
             x[entry] = x.loc[entry][:-8]
             x[entry] = x.loc[entry][11:]
         
+        print("Latest entry: \t%s" %str(x.iloc[-1]))
+        
         # Plot the data
         fig, ax = plt.subplots()
         ax.plot(x, y)
@@ -152,11 +134,16 @@ class Weather:
                 label.set_visible(False)
 
         # Plot options
-        plt.title('Displaying '+mag_label+ ' at '+stationholder+'.\n Data for '+ t_now +' from '+source_id+'. Max: '+mag_max+', Min: '+mag_min )
-        plt.xlabel('Time [s]')
+        plt.title('Displaying '+mag_label+ ' at '+stationholder+'.\n Data for '+ self.now +' from '+source_id+'. Max: '+mag_max+', Min: '+mag_min )
+        plt.xlabel('Time [hh:mm]')
         plt.ylabel(unit_label)
         plt.grid()
-        plt.show()        
+        #plt.show()
+        plt.draw()
+        plt.pause(1)
+        input("<ENTER to close plot>")
+        plt.close(fig)
+
 def main():    
     obj = Weather('https://frost.met.no/sources/v0.jsonld?','https://frost.met.no/observations/v0.jsonld')
 
