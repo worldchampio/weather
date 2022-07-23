@@ -1,3 +1,4 @@
+import readline
 import requests
 import numpy as np
 import pandas as pd
@@ -27,8 +28,9 @@ class Weather:
             # Supress pd error messages (hey if it works)
             pd.set_option('mode.chained_assignment',None)
 
-            secret = 'acd22841-846a-4dc3-a82d-d3b499bf18cc' #unused
-            client_id = 'e357e001-b780-4a47-be88-9f0f84a3060b'
+            with open("secret.txt", "r") as file:
+                first_line = file.readline()
+            client_id = first_line
             
             # Format source parameters with user input
             param_src = self.get_src()
