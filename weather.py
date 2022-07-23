@@ -1,9 +1,9 @@
-import readline
 import requests
 import numpy as np
 import pandas as pd
 from datetime import date
 import matplotlib.pyplot as plt
+import sys
 
 """
 Two https GET requests are chained together, so that
@@ -21,7 +21,7 @@ class Weather:
     day   = int(today.strftime("%d"))+1
     tomorrow = today.strftime("%Y-%m-")+str(day)
 
-    def __init__(self, end_src, end_observ) -> None:
+    def __init__(self, end_src, end_observ, optionalSource) -> None:
         try:
             elem = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
 
@@ -33,7 +33,7 @@ class Weather:
             client_id = first_line
             
             # Format source parameters with user input
-            param_src = self.get_src()
+            param_src = self.get_src(optionalSource)
 
             # Response is bundled in 'sensorsystem'
             sensorsystem = self.get_data(end_src, param_src, client_id)
@@ -61,9 +61,13 @@ class Weather:
             print("Error: %s" %e)
             main()
 
-    def get_src(self):
+    def get_src(self, optionalSource):
+        if len(optionalSource)>2:
+            out = optionalSource
+        else:
+            out = str(input("Type location: [yme, statfjord a/b/c, troll a/b/c, .. etc] \n"))
         return {
-            'name': str(input("Type location: [yme, statfjord a/b/c, troll a/b/c, .. etc] \n"))
+            'name': out
         }
         
     def get_data(self, endpoint, parameters,_client_id): # Done
@@ -146,8 +150,11 @@ class Weather:
         input("<ENTER to close plot>")
         plt.close(fig)
 
-def main():    
-    obj = Weather('https://frost.met.no/sources/v0.jsonld?','https://frost.met.no/observations/v0.jsonld')
+def main():
+    optionalSource = ""
+    if len(sys.argv)>1:
+        optionalSource = sys.argv[1]
+    obj = Weather('https://frost.met.no/sources/v0.jsonld?','https://frost.met.no/observations/v0.jsonld',optionalSource)
 
 if __name__ == "__main__":
     main()
