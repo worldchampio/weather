@@ -114,6 +114,6 @@ class Weather:
         plt.close(fig)
 
 def main():
-    Weather("2021-07-12")
+    Weather()
 if __name__ == "__main__":
     main()
