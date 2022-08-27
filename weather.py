@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 from datetime import date
 import matplotlib.pyplot as plt
+from dateutil import parser
 """
 Two https GET requests are chained together, so that
 a source id for a manually inputted location is
@@ -13,16 +14,11 @@ can then be selected.
 Data is requested for the current day.
 """
 class Weather:
-    today = date.today()
-    now   = today.strftime("%Y-%m-%d")
-    day   = int(today.strftime("%d"))+1
-    tomorrow = today.strftime("%Y-%m-")+str(day)
-    def __init__(self) -> None:
+    def __init__(self, date='') -> None:
         try:
             elementNames        = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
             sourceEndpoint      = 'https://frost.met.no/sources/v0.jsonld?'
             observationEndpoint = 'https://frost.met.no/observations/v0.jsonld'
-            
             pd.set_option('mode.chained_assignment',None)
             with open("secret.txt", "r") as file: clientID = file.readline()
             sensorsystem = self.requestData(sourceEndpoint,self.getSourceInput(),clientID)
@@ -34,19 +30,37 @@ class Weather:
             observationParameters = {
                 'sources'      : sourceID,
                 'elements'     : str(elementNames[i-1]),
-                'referencetime': str(self.now+'/'+self.tomorrow)
+                'referencetime': self.formatDate(date)
             }
             observations = self.requestData(observationEndpoint,observationParameters,clientID)
             self.plotData(observations, sourceOwner, sourceID)
         except Exception as e:
-            print("Error: %s" %(e,e.with_traceback()))
+            print("Error: \n\t%s" %(e))
             main()
     
     def getSourceInput(self):
-        sourceName = str(input("Type location: [yme, statfjord a/b/c, troll a/b/c, .. etc] \n"))
+        supportedSources="""
+            Yme
+            Statfjord a/b/c
+            Troll a/b/c
+            Draugen
+            Sola\n"""
+        print("List of some updated sources:\n%s"%supportedSources)
+        sourceName = str(input("Type location: "))
         if sourceName in {"exit","stop","out","break","abort","^C"}: exit()
         return {'name': sourceName }
-    
+
+    def formatDate(self, today):
+        if len(today)<2:
+            today = date.today()
+        else:
+            today = parser.parse(today)
+        now   = today.strftime("%Y-%m-%d")
+        day   = int(today.strftime("%d"))+1
+        tomorrow = today.strftime("%Y-%m-")+str(day)
+        self.now = now
+        return now+'/'+tomorrow
+
     def requestData(self, endpoint, parameters,clientID):
         r = requests.get(endpoint, parameters, auth=(clientID,''))
         if r.status_code == 200: return np.asarray(r.json()['data'])
@@ -81,7 +95,8 @@ class Weather:
         for entry in range(0, len(timeData)):
             timeData[entry] = timeData.loc[entry][:-8]
             timeData[entry] = timeData.loc[entry][11:]
-        print("Latest entry: \t%s" %str(timeData.iloc[-1]))
+        latestTime = timeData.iloc[-1]
+        print("Latest entry: \t%s" %str(latestTime))
         fig, ax = plt.subplots()
         ax.plot(timeData, observationData)
         # Display every nth label
@@ -99,7 +114,6 @@ class Weather:
         plt.close(fig)
 
 def main():
-    Weather()
-    
+    Weather("2021-07-12")
 if __name__ == "__main__":
     main()
