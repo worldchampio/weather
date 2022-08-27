@@ -14,6 +14,10 @@ can then be selected.
 Data is requested for the current day.
 """
 class Weather:
+    """
+    Ctor takes optional date argument which must be formatted "YYYY-MM-DD" if specified.
+    Otherwise, the current date is used.
+    """
     def __init__(self, date='') -> None:
         try:
             elementNames        = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
@@ -37,7 +41,6 @@ class Weather:
         except Exception as e:
             print("Error: \n\t%s" %(e))
             main()
-    
     def getSourceInput(self):
         supportedSources="""
             Yme
