@@ -19,16 +19,16 @@ class Weather:
     tomorrow = today.strftime("%Y-%m-")+str(day)
     def __init__(self) -> None:
         try:
-            elementNames = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
-            sourceEndpoint = 'https://frost.met.no/sources/v0.jsonld?'
+            elementNames        = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
+            sourceEndpoint      = 'https://frost.met.no/sources/v0.jsonld?'
             observationEndpoint = 'https://frost.met.no/observations/v0.jsonld'
+            
             pd.set_option('mode.chained_assignment',None)
-            with open("secret.txt", "r") as file:
-                clientID = file.readline()
-            sensorsystem = self.requestData(sourceEndpoint,self.getNameInput(),clientID)
-            sourceID = sensorsystem[0]['id']
-            sourceOwner = sensorsystem[0]['name']
-            sourceOwner = str(sourceOwner[0]+sourceOwner[1:len(sourceOwner)].lower())
+            with open("secret.txt", "r") as file: clientID = file.readline()
+            sensorsystem = self.requestData(sourceEndpoint,self.getSourceInput(),clientID)
+            sourceID     = sensorsystem[0]['id']
+            sourceOwner  = sensorsystem[0]['name']
+            sourceOwner  = str(sourceOwner[0]+sourceOwner[1:len(sourceOwner)].lower())
             print("Found source %s (%s)" % (sourceID,sourceOwner))
             i = int(input('Plot options:\nCurrent[1], Wave Hs[2], Wind[3], Temp[4]: '))
             observationParameters = {
@@ -41,24 +41,19 @@ class Weather:
         except Exception as e:
             print("Error: %s" %(e,e.with_traceback()))
             main()
-    def getNameInput(self):
+    
+    def getSourceInput(self):
         sourceName = str(input("Type location: [yme, statfjord a/b/c, troll a/b/c, .. etc] \n"))
-        if sourceName in {"exit","stop","out","break","abort","^C"}:
-            exit()
+        if sourceName in {"exit","stop","out","break","abort","^C"}: exit()
         return {'name': sourceName }
+    
     def requestData(self, endpoint, parameters,clientID):
         r = requests.get(endpoint, parameters, auth=(clientID,''))
-        # Check if the request worked, print out any errors
-        if r.status_code == 200:
-            # Extract JSON data
-            json = r.json()
-            return np.asarray(json['data'])
-        else:
-            print("Error %i, %s" %(r.status_code,r.reason))
-        
-    def plotData(self, data, sourceOwner, source_id): #Done
+        if r.status_code == 200: return np.asarray(r.json()['data'])
+        else: print("Error %i, %s" %(r.status_code,r.reason))
+    
+    def plotData(self, data, sourceOwner, source_id):
         df = pd.DataFrame()
-        # Handle returned array
         for i in range(len(data)):
             row = pd.DataFrame(data[i]['observations'])
             row['referenceTime'] = data[i]['referenceTime']
