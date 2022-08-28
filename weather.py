@@ -13,45 +13,50 @@ can then be selected.
 
 Data is requested for the current day.
 """
+# Auxiliary Input functions
+def getElementInput():
+    elementNames=['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
+    i = int(input('Plot options:\nCurrent[1], Wave Hs[2], Wind[3], Temp[4]: '))
+    return str(elementNames[i-1])
+def getSourceInput():
+    supportedSources="""
+        Yme
+        Statfjord a/b/c
+        Troll a/b/c
+        Draugen
+        Sola\n"""
+    print("List of some updated sources:\n%s"%supportedSources)
+    sourceName = str(input("Type location: "))
+    if sourceName in {"exit","stop","out","break","abort","^C"}: exit()
+    return {'name': sourceName }
+
 class Weather:
-    """
-    Ctor takes optional date argument which must be formatted "YYYY-MM-DD" if specified.
-    Otherwise, the current date is used.
-    """
-    def __init__(self, date='') -> None:
+    def __init__(self, 
+        source   = getSourceInput(),
+        element  = getElementInput(),
+        date     = '',  
+        plotData = True ) -> None:
         try:
-            elementNames        = ['sea_water_speed','sea_surface_wave_significant_height','wind_speed','air_temperature']
             sourceEndpoint      = 'https://frost.met.no/sources/v0.jsonld?'
             observationEndpoint = 'https://frost.met.no/observations/v0.jsonld'
             pd.set_option('mode.chained_assignment',None)
             with open("secret.txt", "r") as file: clientID = file.readline()
-            sensorsystem = self.requestData(sourceEndpoint,self.getSourceInput(),clientID)
+            sensorsystem = self.requestData(sourceEndpoint,source,clientID)
             sourceID     = sensorsystem[0]['id']
             sourceOwner  = sensorsystem[0]['name']
             sourceOwner  = str(sourceOwner[0]+sourceOwner[1:len(sourceOwner)].lower())
             print("Found source %s (%s)" % (sourceID,sourceOwner))
-            i = int(input('Plot options:\nCurrent[1], Wave Hs[2], Wind[3], Temp[4]: '))
             observationParameters = {
                 'sources'      : sourceID,
-                'elements'     : str(elementNames[i-1]),
+                'elements'     : element,
                 'referencetime': self.formatDate(date)
             }
             observations = self.requestData(observationEndpoint,observationParameters,clientID)
-            self.plotData(observations, sourceOwner, sourceID)
+            if plotData: self.plotData(observations, sourceOwner, sourceID)
+            else: return observations
         except Exception as e:
             print("Error: \n\t%s" %(e))
             main()
-    def getSourceInput(self):
-        supportedSources="""
-            Yme
-            Statfjord a/b/c
-            Troll a/b/c
-            Draugen
-            Sola\n"""
-        print("List of some updated sources:\n%s"%supportedSources)
-        sourceName = str(input("Type location: "))
-        if sourceName in {"exit","stop","out","break","abort","^C"}: exit()
-        return {'name': sourceName }
 
     def formatDate(self, today):
         if len(today)<2:
