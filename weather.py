@@ -37,10 +37,8 @@ class Weather:
         date     = '',  
         plotData = True ) -> None:
         try:
-            if len(source)<2:
-                source = getSourceInput()
-            if len(element)<2:
-                element = getElementInput()
+            if not source: source = getSourceInput()
+            if not element: element = getElementInput()
             sourceEndpoint      = 'https://frost.met.no/sources/v0.jsonld?'
             observationEndpoint = 'https://frost.met.no/observations/v0.jsonld'
             pd.set_option('mode.chained_assignment',None)
@@ -63,10 +61,8 @@ class Weather:
             main()
 
     def formatDate(self, today):
-        if len(today)<2:
-            today = date.today()
-        else:
-            today = parser.parse(today)
+        if not today: today = date.today()
+        else: today = parser.parse(today)
         now   = today.strftime("%Y-%m-%d")
         day   = int(today.strftime("%d"))+1
         tomorrow = today.strftime("%Y-%m-")+str(day)
@@ -126,6 +122,6 @@ class Weather:
         plt.close(fig)
 
 def main():
-    Weather()
+    Weather('statfjord a','sea_water_speed')
 if __name__ == "__main__":
     main()
