@@ -28,20 +28,24 @@ def getSourceInput():
     print("List of some updated sources:\n%s"%supportedSources)
     sourceName = str(input("Type location: "))
     if sourceName in {"exit","stop","out","break","abort","^C"}: exit()
-    return {'name': sourceName }
+    return sourceName
 
 class Weather:
     def __init__(self, 
-        source   = getSourceInput(),
-        element  = getElementInput(),
+        source='',
+        element='',
         date     = '',  
         plotData = True ) -> None:
         try:
+            if len(source)<2:
+                source = getSourceInput()
+            if len(element)<2:
+                element = getElementInput()
             sourceEndpoint      = 'https://frost.met.no/sources/v0.jsonld?'
             observationEndpoint = 'https://frost.met.no/observations/v0.jsonld'
             pd.set_option('mode.chained_assignment',None)
             with open("secret.txt", "r") as file: clientID = file.readline()
-            sensorsystem = self.requestData(sourceEndpoint,source,clientID)
+            sensorsystem = self.requestData(sourceEndpoint,{'name':source},clientID)
             sourceID     = sensorsystem[0]['id']
             sourceOwner  = sensorsystem[0]['name']
             sourceOwner  = str(sourceOwner[0]+sourceOwner[1:len(sourceOwner)].lower())
