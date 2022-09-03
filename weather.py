@@ -35,7 +35,7 @@ class Weather:
         source='',
         element='',
         date     = '',  
-        plotData = True ) -> None:
+        plotData = True ):
         try:
             if not source: source = getSourceInput()
             if not element: element = getElementInput()
@@ -122,6 +122,6 @@ class Weather:
         plt.close(fig)
 
 def main():
-    Weather('statfjord a','sea_water_speed')
+    Weather()
 if __name__ == "__main__":
     main()
