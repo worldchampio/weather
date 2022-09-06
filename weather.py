@@ -54,8 +54,7 @@ class Weather:
                 'referencetime': self.formatDate(date)
             }
             observations = self.requestData(observationEndpoint,observationParameters,clientID)
-            if plotData: self.plotData(observations, sourceOwner, sourceID)
-            else: return observations
+            self.plotData(observations, sourceOwner, sourceID)
         except Exception as e:
             print("Error: \n\t%s" %(e))
             main()
@@ -104,7 +103,7 @@ class Weather:
             timeData[entry] = timeData.loc[entry][:-8]
             timeData[entry] = timeData.loc[entry][11:]
         latestTime = timeData.iloc[-1]
-        print("Latest entry: \t%s" %str(latestTime))
+        print("Latest entry: \t%s (%i entries)" %(str(latestTime),timeData.size))
         fig, ax = plt.subplots()
         ax.plot(timeData, observationData)
         # Display every nth label
