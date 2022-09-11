@@ -35,7 +35,10 @@ class Weather:
     def __init__(self, 
         source  ='',
         element ='',
-        date    = ''):
+        date    = '',
+        windowSizes = [5,10,15,20] 
+    ):
+        self.windowSizes = windowSizes
         with open("secret.txt", "r") as file: self.clientID = file.readline()
         try:
             if not source: source = getSourceInput()
@@ -108,8 +111,10 @@ class Weather:
         print("Latest entry: \t%s (%i entries)" %(str(latestTime),timeData.size))
         fig, ax = plt.subplots()
         ax.plot(timeData, observationData)
-        smoothingSize = [5,10,20,50]
-        for i in smoothingSize:
+
+        legends = ["Raw data"]
+        for i in self.windowSizes:
+            legends.append("wSize: %i" %i)
             avg = rolling.RollingAverage(observationData,i)
             averageData = avg.getData()
             ax.plot(timeData, averageData)
@@ -121,6 +126,7 @@ class Weather:
         plt.title('Displaying '+displayLabel+ ' at '+sourceOwner+'.\n Data for '+ self.now +' from '+source_id+'. Max: '+dataMax+', Min: '+dataMin )
         plt.xlabel('Time [hh:mm]')
         plt.ylabel(unit_label)
+        plt.legend(legends)
         plt.grid()
         plt.draw()
         plt.pause(1)
