@@ -4,6 +4,7 @@ import pandas as pd
 from datetime import date
 import matplotlib.pyplot as plt
 from dateutil import parser
+import rolling
 """
 Two https GET requests are chained together, so that
 a source id for a manually inputted location is
@@ -32,18 +33,17 @@ def getSourceInput():
 
 class Weather:
     def __init__(self, 
-        source='',
-        element='',
-        date     = '',  
-        plotData = True ):
+        source  ='',
+        element ='',
+        date    = ''):
+        with open("secret.txt", "r") as file: self.clientID = file.readline()
         try:
             if not source: source = getSourceInput()
             if not element: element = getElementInput()
             sourceEndpoint      = 'https://frost.met.no/sources/v0.jsonld?'
             observationEndpoint = 'https://frost.met.no/observations/v0.jsonld'
             pd.set_option('mode.chained_assignment',None)
-            with open("secret.txt", "r") as file: clientID = file.readline()
-            sensorsystem = self.requestData(sourceEndpoint,{'name':source},clientID)
+            sensorsystem = self.requestData(sourceEndpoint,{'name':source})
             sourceID     = sensorsystem[0]['id']
             sourceOwner  = sensorsystem[0]['name']
             sourceOwner  = str(sourceOwner[0]+sourceOwner[1:len(sourceOwner)].lower())
@@ -53,11 +53,13 @@ class Weather:
                 'elements'     : element,
                 'referencetime': self.formatDate(date)
             }
-            observations = self.requestData(observationEndpoint,observationParameters,clientID)
+            observations = self.requestData(observationEndpoint,observationParameters)
             self.plotData(observations, sourceOwner, sourceID)
         except Exception as e:
             print("Error: \n\t%s" %(e))
             main()
+        except KeyboardInterrupt:
+            exit()
 
     def formatDate(self, today):
         if not today: today = date.today()
@@ -68,8 +70,8 @@ class Weather:
         self.now = now
         return now+'/'+tomorrow
 
-    def requestData(self, endpoint, parameters,clientID):
-        r = requests.get(endpoint, parameters, auth=(clientID,''))
+    def requestData(self, endpoint, parameters):
+        r = requests.get(endpoint, parameters, auth=(self.clientID,''))
         if r.status_code == 200: return np.asarray(r.json()['data'])
         else: print("Error %i, %s" %(r.status_code,r.reason))
     
@@ -106,6 +108,11 @@ class Weather:
         print("Latest entry: \t%s (%i entries)" %(str(latestTime),timeData.size))
         fig, ax = plt.subplots()
         ax.plot(timeData, observationData)
+        smoothingSize = [5,10,20,50]
+        for i in smoothingSize:
+            avg = rolling.RollingAverage(observationData,i)
+            averageData = avg.getData()
+            ax.plot(timeData, averageData)
         # Display every nth label
         n = int(len(observationData)/8)
         for index, label in enumerate(ax.xaxis.get_ticklabels()):
