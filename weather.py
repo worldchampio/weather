@@ -14,6 +14,18 @@ class Weather:
     attached to the desired location. Four observation types
     can then be selected.
     Rolling average can be calculated, with windowsize = 5 as default.
+    +------+
+    | FLOW |
+    +------+
+    INPUT: location:
+        -> GET(location)        -> ID
+    INPUT: element:
+        -> GET(..,ID,element)   -> DATA
+    INPUT: windowSize(s)
+        -> calculate RollingAverage(s)
+
+    plot(DATA)
+    plot(RollingAverage(s))
     """
     def __init__(self, 
         source  = '',
