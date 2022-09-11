@@ -17,7 +17,7 @@ class Weather:
         source  = '',
         element = '',
         date    = '',
-        windowSizes = [5],
+        windowSizes = [5]
     ):
         self.fig, self.ax = plt.subplots()
         self.windowSizes = windowSizes
@@ -89,7 +89,7 @@ class Weather:
     def addRollingAverages(self):
         legends = ["Raw data"]
         for windowSize in self.windowSizes:
-            legends.append("wSize: %i" %windowSize)
+            legends.append(r"$w_{Size}$=%i" %windowSize)
             averageData = rolling.RollingAverage(self.data,windowSize).getData()   
             self.ax.plot(self.time, averageData)
         return legends
@@ -132,8 +132,9 @@ class Weather:
         plt.title(
             'Displaying '+self.displayLabel+ ' at '+self.sourceOwner+
             '.\n Data for '+ self.now +' from '+self.sourceID+
-            '. Max: '+self.dataMax+', Min: '+self.dataMin
+            r'. $D_{max}: $'+self.dataMax+r', $D_{min}: $ '+self.dataMin
         )
+
         plt.xlabel('Time [hh:mm]')
         plt.ylabel(self.unitLabel)
         self.spaceLabels()
