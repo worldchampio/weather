@@ -40,7 +40,6 @@ class Weather:
             }
             observations = self.requestData(observationEndpoint,observationParameters)
             self.formatData(observations)
-            self.reportInfo()
             self.plotData()
         except Exception as e:
             print("Error: \n\t%s" %(e))
@@ -99,7 +98,7 @@ class Weather:
         df = pd.DataFrame()
         for i in range(len(data)):
             row = pd.DataFrame(data[i]['observations'])
-            row['referenceTime'] = data[i]['referenceTime']
+            row['referenceTime'] = data[i]['referenceTime'][11:-8] #remove unecessary parts of timestamp
             row['sourceId']      = data[i]['sourceId']
             df = pd.concat([df,row])
         df = df.reset_index()
@@ -115,15 +114,11 @@ class Weather:
         self.dataMax = str(round(max(df['value']),1))
         self.dataMin = str(round(min(df['value']),1))
         
-        # Observation name formatting
+        # Store data in object
         self.displayLabel = df['elementId'][1].replace('_',' ')
         self.time = df.loc[:,'referenceTime']
         self.data = df['value']
-
-        # Remove unecessary digits from timestamp to get format -> [hh:mm]
-        for entry in range(0, len(self.time)):
-            self.time[entry] = self.time.loc[entry][:-8]
-            self.time[entry] = self.time.loc[entry][11:]
+        self.reportInfo()
 
     def spaceLabels(self):
         # Display every nth label
