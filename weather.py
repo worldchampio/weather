@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import date
 import matplotlib.pyplot as plt
 from dateutil import parser
-import rolling
+import rollingAvg
 
 class Weather:
     """
@@ -106,7 +106,7 @@ class Weather:
         legends = ["Raw data"]
         for windowSize in self.windowSizes:
             legends.append(r"$w_{Size}$=%i" %windowSize)
-            averageData = rolling.RollingAverage(self.data,windowSize).getData()   
+            averageData = rollingAvg.RollingAverage(self.data,windowSize).getData()   
             self.ax.plot(self.time, averageData)
         return legends
     # Extract data recieved from the REST-API to use for plotting
