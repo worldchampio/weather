@@ -104,8 +104,10 @@ class Weather:
     """
     def addRollingAverages(self):
         legends = ["Raw data"]
-        for windowSize in self.windowSizes:
-            legends.append(r"$w_{Size}$=%i" %windowSize)
+        for i in range(0,len(self.windowSizes)):
+            windowSize = self.windowSizes[i]
+            if (windowSize > len(self.data)): windowSize = len(self.data)
+            legends.append(r"$w_{Size}$=%i" % windowSize)
             averageData = rollingAvg.RollingAverage(self.data,windowSize).getData()   
             self.ax.plot(self.time, averageData)
         return legends
@@ -154,6 +156,6 @@ class Weather:
         plt.close(self.fig)
 
 def main():
-    Weather()
+    Weather(windowSizes=[120,121])
 if __name__ == "__main__":
     main()
