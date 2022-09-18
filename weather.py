@@ -110,6 +110,7 @@ class Weather:
             legends.append(r"$w_{Size}$=%i" % windowSize)
             averageData = rollingAvg.RollingAverage(self.data,windowSize).getData()   
             self.ax.plot(self.time, averageData)
+        
         return legends
     # Extract data recieved from the REST-API to use for plotting
     def formatData(self, data):
@@ -145,17 +146,18 @@ class Weather:
             'Data for '+ self.now +' from '+self.sourceID+
             r'. $D_{max}: $'+self.dataMax+r', $D_{min}: $ '+self.dataMin
         )
-        plt.xlabel('Time [hh:mm]')
+        plt.xlabel('Time')
         plt.ylabel(self.unitLabel)
+        plt.ylim((float(self.dataMin)*0.9,float(self.dataMax)*1.1))
         self.spaceLabels()
         plt.legend(updatedLegends)
-        plt.grid()
+        plt.grid(axis='y')
         plt.draw()
         plt.pause(1)
         input("<ENTER to close plot>")
         plt.close(self.fig)
 
 def main():
-    Weather(windowSizes=[120,121])
+    Weather()
 if __name__ == "__main__":
     main()
