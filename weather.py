@@ -148,7 +148,7 @@ class Weather:
         )
         plt.xlabel('Time')
         plt.ylabel(self.unitLabel)
-        plt.ylim((float(self.dataMin)*0.9,float(self.dataMax)*1.1))
+        plt.ylim((float(self.dataMin)/2,float(self.dataMax)*1.1))
         self.spaceLabels()
         plt.legend(updatedLegends)
         plt.grid(axis='y')
