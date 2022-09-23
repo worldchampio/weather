@@ -30,11 +30,9 @@ class Weather:
     def __init__(self, 
         source  = '',
         element = '',
-        date    = '',
-        windowSizes = [5]
+        date    = ''
     ):
         self.fig, self.ax = plt.subplots()
-        self.windowSizes = windowSizes
         with open("secret.txt", "r") as file: self.clientID = file.readline()
         try:
             if not source: source = self.getSourceInput()
@@ -104,13 +102,11 @@ class Weather:
     """
     def addRollingAverages(self):
         legends = ["Raw data"]
-        for i in range(0,len(self.windowSizes)):
-            windowSize = self.windowSizes[i]
-            if (windowSize > len(self.data)): windowSize = len(self.data)
-            legends.append(r"$w_{Size}$=%i" % windowSize)
-            averageData = rollingAvg.RollingAverage(self.data,windowSize).getData()   
-            self.ax.plot(self.time, averageData)
-        
+        windowSize = (int(len(self.data)/10))
+        legends.append(r"$w_{Size}$=%i" % windowSize)
+        averageData = rollingAvg.RollingAverage(self.data,windowSize).getData()   
+        self.ax.plot(self.time, averageData)
+    
         return legends
     # Extract data recieved from the REST-API to use for plotting
     def formatData(self, data):
